@@ -25,7 +25,7 @@ private:
 
 GPSTransform::GPSTransform(ros::NodeHandle &nh) : nh_(nh)
 {
-    setpoint_sub_ = nh_.subscribe("husky_gps_setpoint",
+    setpoint_sub_ = nh_.subscribe("gps_nav_setpoint",
                                   10,
                                   &GPSTransform::setpointCallback,
                                   this);
