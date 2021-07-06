@@ -5,6 +5,9 @@
 #include "robot_localization/FromLL.h"
 
 
+namespace gps_navigation
+{
+
 class GPSTransform
 {
 public:
@@ -60,4 +63,4 @@ void GPSTransform::setpointCallback(const geographic_msgs::GeoPoint::ConstPtr& m
     goal_pub_.publish(goal_msg_);
 
 }
-
+}

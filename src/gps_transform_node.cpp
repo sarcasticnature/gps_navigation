@@ -7,7 +7,7 @@ int main(int argc, char **argv)
     ros::init(argc, argv, "gps_transform");
     ros::NodeHandle nh;
 
-    GPSTransform gps_transform(nh);
+    gps_navigation::GPSTransform gps_transform(nh);
 
     ros::spin();
     return 0;
