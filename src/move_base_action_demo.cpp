@@ -3,6 +3,16 @@
 #include <actionlib/client/simple_action_client.h>
 
 
+void doneCallback(const actionlib::SimpleClientGoalState& state,
+                  const move_base_msgs::MoveBaseResultConstPtr& result)
+{
+  ROS_INFO("Finished move_base action");
+  if(state == actionlib::SimpleClientGoalState::SUCCEEDED)
+    ROS_INFO("Successfully moved 1 meter forward");
+  else
+    ROS_INFO("Failed to move forward for an unknown reason");
+}
+
 int main(int argc, char** argv)
 {
   using MoveBaseClient = actionlib::SimpleActionClient<move_base_msgs::MoveBaseAction>;
@@ -24,14 +34,16 @@ int main(int argc, char** argv)
   goal.target_pose.pose.orientation.w = 1.0;
 
   ROS_INFO("Sending goal");
-  ac.sendGoal(goal);
+  ac.sendGoal(goal, &doneCallback);
 
-  ac.waitForResult();
+  ros::spin();
 
-  if(ac.getState() == actionlib::SimpleClientGoalState::SUCCEEDED)
-    ROS_INFO("Successfully moved 1 meter forward");
-  else
-    ROS_INFO("Failed to move forward for an unknown reason");
+//  ac.waitForResult();
+//
+//  if(ac.getState() == actionlib::SimpleClientGoalState::SUCCEEDED)
+//    ROS_INFO("Successfully moved 1 meter forward");
+//  else
+//    ROS_INFO("Failed to move forward for an unknown reason");
 
   return 0;
 }
