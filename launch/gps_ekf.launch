@@ -1,9 +1,0 @@
-<launch>
-    <node pkg="robot_localization" type="ekf_localization_node" name="ekf_gps_localization">
-        <rosparam command="load" file="$(find gps_navigation)/config/gps_localization.yaml" />
-        <remap from="odometry/filtered" to="odometry/filtered/global"/> 
-<!--        <remap from="odometry/filtered" to="odometry/filtered/global"/> -->
-
-    </node>
-</launch>
-
