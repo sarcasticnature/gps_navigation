@@ -10,16 +10,23 @@ public:
   explicit DriveActionClient(ros::NodeHandle nh) : ac_("move_base", true),
                                                    nh_(nh)
   {
+    timeout_ = nh_.createTimer(ros::Duration(3.0),
+                               boost::bind(&DriveActionClient::timeoutCallback, this, _1),
+                               true,
+                               false);
     ROS_INFO("Waiting for server");
     ac_.waitForServer();
     ROS_INFO("Server started");
   }
 
+  void timeoutCallback(const ros::TimerEvent&)
+  {
+    ROS_INFO("Timer timed out");
+  }
+
   void doneCallback(const actionlib::SimpleClientGoalState& state,
                     const move_base_msgs::MoveBaseResultConstPtr& result)
   {
-
-
   }
 
   void feedbackCallback(const move_base_msgs::MoveBaseFeedbackConstPtr& fb)
@@ -37,6 +44,7 @@ public:
     goal.target_pose.pose.position.x = distance;
     goal.target_pose.pose.orientation.w = 1.0;
 
+    timeout_.start();
     ac_.sendGoal(goal,
                  Client::SimpleDoneCallback(),
                  Client::SimpleActiveCallback(),
@@ -46,6 +54,7 @@ public:
 private:
   ros::NodeHandle nh_;
   Client ac_;
+  ros::Timer timeout_;
 };
 
 
