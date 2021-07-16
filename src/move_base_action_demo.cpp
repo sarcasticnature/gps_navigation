@@ -21,7 +21,8 @@ public:
 
   void timeoutCallback(const ros::TimerEvent&)
   {
-    ROS_INFO("Timer timed out");
+    ROS_INFO("Timer timed out, canceling move_base goal");
+    ac_.cancelGoal();
   }
 
   void doneCallback(const actionlib::SimpleClientGoalState& state,
