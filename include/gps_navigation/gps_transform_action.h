@@ -1,3 +1,4 @@
+#include <string>
 #include "ros/ros.h"
 #include "geometry_msgs/PoseStamped.h"
 #include "geographic_msgs/GeoPoint.h"
@@ -26,6 +27,7 @@ private:
   ros::ServiceClient from_ll_client_;
   Client ac_;
   robot_localization::FromLL from_ll_srv_;
+  std::string world_frame_;
 
 };
 
@@ -34,17 +36,21 @@ GPSTransformAction::GPSTransformAction(const ros::NodeHandle &nh)
     : nh_(nh),
       ac_("move_base", true)
 {
-  setpoint_sub_ = nh_.subscribe("gps_nav_setpoint",
+  setpoint_sub_ = nh_.subscribe("/gps_nav_setpoint",
                                 10,
                                 &GPSTransformAction::setpointCallback,
                                 this);
 
-  timeout_ = nh.createTimer(ros::Duration(3.0),
-                            boost::bind(&GPSTransformAction::timeoutCallback, this, _1),
+  timeout_ = nh.createTimer(ros::Duration(10.0),
+                            boost::bind(&GPSTransformAction::timeoutCallback,
+                                        this,
+                                        _1),
                             true,   // oneshot
                             false); // do not auto-start
 
-  from_ll_client_ = nh_.serviceClient<robot_localization::FromLL>("fromLL");
+  from_ll_client_ = nh_.serviceClient<robot_localization::FromLL>("/fromLL");
+
+  nh_.getParam("world_frame", world_frame_);
 
 }
 
@@ -61,7 +67,7 @@ void GPSTransformAction::setpointCallback(const geographic_msgs::GeoPoint::Const
 
     move_base_msgs::MoveBaseGoal goal;
     goal.target_pose.header.stamp = ros::Time::now();
-    goal.target_pose.header.frame_id = "map";
+    goal.target_pose.header.frame_id = world_frame_;
     goal.target_pose.pose.position.x = from_ll_srv_.response.map_point.x;
     goal.target_pose.pose.position.y = from_ll_srv_.response.map_point.y;
     goal.target_pose.pose.orientation.w = 1.0;
@@ -83,6 +89,8 @@ void GPSTransformAction::timeoutCallback(const ros::TimerEvent&)
   ROS_INFO("Timeout hit, canceling move_base action");
   ac_.cancelGoal();
   ROS_INFO("Action canceled");
+
+  timeout_.stop();
 }
 
 void GPSTransformAction::feedbackCallback(const move_base_msgs::MoveBaseFeedbackConstPtr& fb)

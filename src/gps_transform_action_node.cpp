@@ -5,7 +5,7 @@
 int main(int argc, char **argv)
 {
     ros::init(argc, argv, "gps_transform_action");
-    ros::NodeHandle nh;
+    ros::NodeHandle nh("~");
 
     gps_navigation::GPSTransformAction gps_transform_action(nh);
 

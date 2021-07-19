@@ -1,0 +1,6 @@
+<launch>
+    <node name="gps_nav_simple" pkg="gps_navigation" type="gps_transform_simple_node" output="screen">
+        <param name="world_frame" value="map" />
+    </node>
+</launch>
+
