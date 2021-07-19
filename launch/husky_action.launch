@@ -1,6 +1,7 @@
 <launch>
     <node name="gps_nav_action" pkg="gps_navigation" type="gps_transform_action_node" output="screen">
         <param name="world_frame" value="map" />
+        <param name="timeout" value="3.0" />
     </node>
 </launch>
 
