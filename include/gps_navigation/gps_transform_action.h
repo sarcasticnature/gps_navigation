@@ -18,6 +18,8 @@ public:
 
 private:
   void setpointCallback(const geographic_msgs::GeoPoint::ConstPtr& msg);
+  void doneCallback(const actionlib::SimpleClientGoalState& state,
+                    const move_base_msgs::MoveBaseResultConstPtr& result);
   void timeoutCallback(const ros::TimerEvent&);
   void feedbackCallback(const move_base_msgs::MoveBaseFeedbackConstPtr& fb);
 
@@ -78,13 +80,20 @@ void GPSTransformAction::setpointCallback(const geographic_msgs::GeoPoint::Const
     countdown_.start();
     ROS_INFO("Sending goal to move_base");
     ac_.sendGoal(goal,
-                Client::SimpleDoneCallback(),
+                boost::bind(&GPSTransformAction::doneCallback, this, _1, _2),
                 Client::SimpleActiveCallback(),
                 boost::bind(&GPSTransformAction::feedbackCallback, this, _1));
   }
   else {
     ROS_ERROR("Failed to call service fromLL");
   }
+}
+
+void GPSTransformAction::doneCallback(const actionlib::SimpleClientGoalState& state,
+                                      const move_base_msgs::MoveBaseResultConstPtr& result)
+{
+  ROS_INFO_STREAM("Action completed with state: " << state.toString());
+  countdown_.stop();
 }
 
 void GPSTransformAction::timeoutCallback(const ros::TimerEvent&)
