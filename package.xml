@@ -61,6 +61,7 @@
   <exec_depend>move_base_msgs</exec_depend>
   <exec_depend>robot_localization</exec_depend>
   <exec_depend>roscpp</exec_depend>
+  <depend>std_msgs</depend>
   <depend>geographic_msgs</depend>
   <depend>actionlib_msgs</depend>
 
