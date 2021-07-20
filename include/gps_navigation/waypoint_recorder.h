@@ -26,6 +26,7 @@ private:
   double latitude_;
   double longitude_;
   std::string file_name_;
+  std::string gps_topic_;
   std::ofstream waypoint_file_;
 
 };
@@ -37,7 +38,9 @@ WaypointRecorder::WaypointRecorder(ros::NodeHandle nh) : nh_(nh)
                                10,
                                &WaypointRecorder::triggerCallback,
                                this);
-  gps_sub_ = nh_.subscribe("/navsat/fix",
+  nh_.getParam("gps_topic", gps_topic_);
+  ROS_INFO_STREAM("GPS topic is: " << gps_topic_);
+  gps_sub_ = nh_.subscribe(gps_topic_,
                                10,
                                &WaypointRecorder::gpsCallback,
                                this);
@@ -59,7 +62,7 @@ void WaypointRecorder::gpsCallback(const sensor_msgs::NavSatFix::ConstPtr& msg)
 
 void WaypointRecorder::recordWaypoint()
 {
-  ROS_INFO_STREAM("Recording to file: " << std::fixed << latitude_ << ',' << longitude_);
+  ROS_INFO_STREAM("Recording data to file: " << std::fixed << latitude_ << ',' << longitude_);
   waypoint_file_ << std::fixed << std::setprecision(8) << latitude_ << ',' << longitude_ << std::endl;
 }
 

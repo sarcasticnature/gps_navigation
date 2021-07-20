@@ -1,7 +1,9 @@
 <launch>
     <arg name="filename" default="default.csv"/>
+    <arg name="gps_topic" />
     <node name="waypoint_recorder" pkg="gps_navigation" type="waypoint_recorder" output="screen">
         <param name="waypoint_file" value="$(find gps_navigation)/waypoint_files/$(arg filename)" />
+        <param name="gps_topic" value="$(arg gps_topic)" />
     </node>
 </launch>
 
