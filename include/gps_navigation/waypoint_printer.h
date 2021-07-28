@@ -1,20 +1,12 @@
 #include <string>
 #include <fstream>
-#include <sstream>
 #include <vector>
-#include <utility>
 
 #include "ros/ros.h"
 #include "ros/package.h"
 
 namespace gps_navigation
 {
-
-struct Waypoint
-{
-  double lat;
-  double lon;
-};
 
 class WaypointPrinter
 {
@@ -41,14 +33,13 @@ private:
 
 WaypointPrinter::WaypointPrinter(ros::NodeHandle nh) : nh_(nh)
 {
-  ROS_INFO_STREAM("Package path is: " << ros::package::getPath("gps_navigation"));
   nh_.getParam("filename", filename_);
   waypoint_file_.open(ros::package::getPath("gps_navigation")
                       + "/waypoint_files/"
                       + filename_);
-  ROS_INFO_STREAM("Full path is: " << ros::package::getPath("gps_navigation")
-                      + "/waypoint_files/"
-                      + filename_);
+  ROS_INFO_STREAM("Reading file: " << ros::package::getPath("gps_navigation")
+                  + "/waypoint_files/"
+                  + filename_);
   readFile();
   printFile();
   ros::shutdown();
