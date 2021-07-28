@@ -15,6 +15,7 @@ find_package(catkin REQUIRED COMPONENTS
   robot_localization
   roscpp
   actionlib_msgs
+  roslib
 )
 
 ## System dependencies are found with CMake's conventions
@@ -141,6 +142,7 @@ add_executable(gps_transform_simple_node src/gps_transform_simple_node.cpp)
 add_executable(gps_transform_action_node src/gps_transform_action_node.cpp)
 add_executable(action_demo src/move_base_action_demo.cpp)
 add_executable(waypoint_recorder src/waypoint_recorder_node.cpp)
+add_executable(waypoint_printer src/waypoint_printer_node.cpp)
 
 ## Rename C++ executable without prefix
 ## The above recommended prefix causes long target names, the following renames the
@@ -154,6 +156,7 @@ add_dependencies(gps_transform_simple_node  ${${PROJECT_NAME}_EXPORTED_TARGETS} 
 add_dependencies(gps_transform_action_node  ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
 add_dependencies(action_demo  ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
 add_dependencies(waypoint_recorder  ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
+add_dependencies(waypoint_printer  ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
 
 ## Specify libraries to link a library or executable target against
 target_link_libraries(gps_transform_simple_node 
@@ -167,6 +170,10 @@ target_link_libraries(action_demo
 )
 
 target_link_libraries(waypoint_recorder 
+  ${catkin_LIBRARIES}
+)
+
+target_link_libraries(waypoint_printer 
   ${catkin_LIBRARIES}
 )
 
