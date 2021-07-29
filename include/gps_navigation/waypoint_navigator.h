@@ -28,6 +28,7 @@ public:
 private:
   void readWaypoints();
   void waypointToGoal(const Waypoint& waypoint);
+  void sendGoal();
   void doneCallback(const actionlib::SimpleClientGoalState& state,
                     const move_base_msgs::MoveBaseResultConstPtr& result);
   void timeoutCallback(const ros::TimerEvent&);
@@ -70,8 +71,10 @@ WaypointNavigator::WaypointNavigator(const ros::NodeHandle &nh)
                       + "/waypoint_files/"
                       + filename_);
 
+  ac_.waitForServer();
   readWaypoints();
   waypointToGoal(waypoints_[0]);
+  sendGoal();
 }
 
 void WaypointNavigator::readWaypoints()
@@ -109,12 +112,20 @@ void WaypointNavigator::waypointToGoal(const Waypoint& waypoint)
 
 }
 
+void WaypointNavigator::sendGoal()
+{
+  ac_.sendGoal(goal_,
+              boost::bind(&WaypointNavigator::doneCallback, this, _1, _2),
+              Client::SimpleActiveCallback(),
+              boost::bind(&WaypointNavigator::feedbackCallback, this, _1));
+}
 
 void WaypointNavigator::doneCallback(const actionlib::SimpleClientGoalState& state,
                                       const move_base_msgs::MoveBaseResultConstPtr& result)
 {
   ROS_INFO_STREAM("Action completed with state: " << state.toString());
   countdown_.stop();
+  ros::shutdown();
 }
 
 void WaypointNavigator::timeoutCallback(const ros::TimerEvent&)
