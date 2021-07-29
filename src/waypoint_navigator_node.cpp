@@ -8,6 +8,7 @@ int main(int argc, char **argv)
     ros::NodeHandle nh("~");
 
     gps_navigation::WaypointNavigator navigator(nh);
+    navigator.navigate();
 
     ros::spin();
     return 0;

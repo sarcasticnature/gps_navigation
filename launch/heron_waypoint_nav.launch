@@ -1,7 +1,7 @@
 <launch>
     <node name="gps_nav_action" pkg="gps_navigation" type="waypoint_navigator" output="screen">
         <param name="world_frame" value="odom" />
-        <param name="timeout" value="10.0" />
+        <param name="timeout" value="30.0" />
         <param name="filename" value="default.csv" />
     </node>
 </launch>

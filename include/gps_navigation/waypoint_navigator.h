@@ -24,25 +24,19 @@ public:
 
   using Client = actionlib::SimpleActionClient<move_base_msgs::MoveBaseAction>;
   explicit WaypointNavigator(const ros::NodeHandle &nh);
+  void navigate();
 
 private:
   void readWaypoints();
   void waypointToGoal(const Waypoint& waypoint);
-  void sendGoal();
-  void doneCallback(const actionlib::SimpleClientGoalState& state,
-                    const move_base_msgs::MoveBaseResultConstPtr& result);
-  void timeoutCallback(const ros::TimerEvent&);
-  void feedbackCallback(const move_base_msgs::MoveBaseFeedbackConstPtr& fb);
 
   ros::NodeHandle nh_;
-  ros::Subscriber setpoint_sub_;
-  ros::Timer countdown_;
   ros::ServiceClient from_ll_client_;
   Client ac_;
   robot_localization::FromLL from_ll_srv_;
 
   std::string world_frame_;
-  float timeout_;
+  double timeout_;
   std::string filename_;
   std::fstream waypoint_file_;
   std::vector<Waypoint> waypoints_;
@@ -58,24 +52,46 @@ WaypointNavigator::WaypointNavigator(const ros::NodeHandle &nh)
   nh_.getParam("timeout", timeout_);
   nh_.getParam("filename", filename_);
 
-  countdown_ = nh.createTimer(ros::Duration(timeout_),
-                            boost::bind(&WaypointNavigator::timeoutCallback,
-                                        this,
-                                        _1),
-                            true,   // oneshot
-                            false); // do not auto-start
-
   from_ll_client_ = nh_.serviceClient<robot_localization::FromLL>("/fromLL");
 
   waypoint_file_.open(ros::package::getPath("gps_navigation")
                       + "/waypoint_files/"
                       + filename_);
 
+  ROS_INFO("Waiting for action server");
   ac_.waitForServer();
   readWaypoints();
-  waypointToGoal(waypoints_[0]);
-  sendGoal();
 }
+
+
+void WaypointNavigator::navigate()
+{
+  for (auto waypoint : waypoints_) {
+    waypointToGoal(waypoint);
+
+    ac_.sendGoal(goal_);
+    bool got_result = ac_.waitForResult(ros::Duration(timeout_));
+  
+    if (got_result) {
+      auto status = ac_.getState();
+      if (status != actionlib::SimpleClientGoalState::SUCCEEDED) {
+        ROS_ERROR_STREAM("move_base goal failed with status: "
+                        << status.toString());
+        ros::shutdown();
+      }
+      else
+        ROS_INFO("Goal reached, moving on to next waypoint");
+    }
+    else {
+      ROS_ERROR("waitForResult timed out!");
+      ac_.cancelGoal();
+      ros::shutdown();
+    }
+  }
+  ROS_INFO("Reached last waypoint, shutting down");
+  ros::shutdown();
+}
+
 
 void WaypointNavigator::readWaypoints()
 {
@@ -112,36 +128,4 @@ void WaypointNavigator::waypointToGoal(const Waypoint& waypoint)
 
 }
 
-void WaypointNavigator::sendGoal()
-{
-  ac_.sendGoal(goal_,
-              boost::bind(&WaypointNavigator::doneCallback, this, _1, _2),
-              Client::SimpleActiveCallback(),
-              boost::bind(&WaypointNavigator::feedbackCallback, this, _1));
-}
-
-void WaypointNavigator::doneCallback(const actionlib::SimpleClientGoalState& state,
-                                      const move_base_msgs::MoveBaseResultConstPtr& result)
-{
-  ROS_INFO_STREAM("Action completed with state: " << state.toString());
-  countdown_.stop();
-  ros::shutdown();
-}
-
-void WaypointNavigator::timeoutCallback(const ros::TimerEvent&)
-{
-  ROS_INFO("Timeout hit, canceling move_base action");
-  ac_.cancelGoal();
-  ROS_INFO("Action canceled, shutting down");
-  countdown_.stop();
-  ros::shutdown();
-}
-
-void WaypointNavigator::feedbackCallback(const move_base_msgs::MoveBaseFeedbackConstPtr& fb)
-{
-  ROS_INFO_STREAM("Feedback: x=" << fb->base_position.pose.position.x
-                  << " y=" << fb->base_position.pose.position.y);
-
-}
-
-}
+} // namespace gps_navigation
