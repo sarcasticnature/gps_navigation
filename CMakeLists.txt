@@ -140,7 +140,6 @@ include_directories(
 ## The recommended prefix ensures that target names across packages don't collide
 add_executable(gps_simple_navigator src/gps_simple_navigator_node.cpp)
 add_executable(gps_action_navigator src/gps_action_navigator_node.cpp)
-add_executable(action_demo src/move_base_action_demo.cpp)
 add_executable(waypoint_recorder src/waypoint_recorder_node.cpp)
 add_executable(waypoint_printer src/waypoint_printer_node.cpp)
 add_executable(waypoint_navigator src/waypoint_navigator_node.cpp)
@@ -155,7 +154,6 @@ add_executable(waypoint_navigator src/waypoint_navigator_node.cpp)
 ## same as for the library above
 add_dependencies(gps_simple_navigator  ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
 add_dependencies(gps_action_navigator  ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
-add_dependencies(action_demo  ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
 add_dependencies(waypoint_recorder  ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
 add_dependencies(waypoint_printer  ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
 add_dependencies(waypoint_navigator  ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
@@ -165,9 +163,6 @@ target_link_libraries(gps_simple_navigator
   ${catkin_LIBRARIES}
 )
 target_link_libraries(gps_action_navigator
-  ${catkin_LIBRARIES}
-)
-target_link_libraries(action_demo 
   ${catkin_LIBRARIES}
 )
 
