@@ -1,7 +1,8 @@
 <launch>
+  <arg name="timeout" default="60.0"/>
   <include file="$(find gps_navigation)/launch/gps_action.launch">
     <arg name="world_frame" value="odom"/>
-    <arg name="timeout" value="60.0"/>
+    <arg name="timeout" value="$(arg timeout)"/>
   </include>
 </launch>
 
