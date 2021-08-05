@@ -33,13 +33,22 @@ private:
 
 WaypointPrinter::WaypointPrinter(ros::NodeHandle nh) : nh_(nh)
 {
-  nh_.getParam("filename", filename_);
+  if(!nh_.getParam("filename", filename_)){
+    ROS_ERROR("Could not get parameter \"filename\", shutting down");
+    ros::shutdown();
+  }
   waypoint_file_.open(ros::package::getPath("gps_navigation")
                       + "/waypoint_files/"
-                      + filename_);
+                      + filename_
+                      + ".csv");
+  if(!waypoint_file_.good()){
+    ROS_ERROR("Could not open waypoint file, shutting down");
+    ros::shutdown();
+  }
   ROS_INFO_STREAM("Reading file: " << ros::package::getPath("gps_navigation")
                   + "/waypoint_files/"
-                  + filename_);
+                  + filename_
+                  + ".csv");
   readFile();
   printFile();
   ros::shutdown();

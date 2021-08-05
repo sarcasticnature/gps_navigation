@@ -39,8 +39,14 @@ GPSActionNavigator::GPSActionNavigator(const ros::NodeHandle &nh)
     : nh_(nh),
       ac_("move_base", true)
 {
-  nh_.getParam("world_frame", world_frame_);
-  nh_.getParam("timeout", timeout_);
+  if(!nh_.getParam("world_frame", world_frame_)){
+    ROS_ERROR("Could not get parameter \"world_frame\", shutting down");
+    ros::shutdown();
+  }
+  if(!nh_.getParam("timeout", timeout_)){
+    ROS_ERROR("Could not get parameter \"timeout\", shutting down");
+    ros::shutdown();
+  }
 
   setpoint_sub_ = nh_.subscribe("/gps_nav_setpoint",
                                 10,

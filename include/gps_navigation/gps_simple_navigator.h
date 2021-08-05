@@ -38,7 +38,10 @@ GPSSimpleNavigator::GPSSimpleNavigator(const ros::NodeHandle &nh) : nh_(nh)
 
     from_ll_client_ = nh_.serviceClient<robot_localization::FromLL>("/fromLL");
 
-    nh_.getParam("world_frame", world_frame_);
+    if(!nh_.getParam("world_frame", world_frame_)){
+      ROS_ERROR("Could not get parameter \"world_frame\", shutting down");
+      ros::shutdown();
+    }
 
     ROS_INFO_STREAM("world_frame is: " << world_frame_);
 

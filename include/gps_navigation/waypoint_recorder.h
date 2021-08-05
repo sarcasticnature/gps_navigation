@@ -38,13 +38,19 @@ WaypointRecorder::WaypointRecorder(ros::NodeHandle nh) : nh_(nh)
                                10,
                                &WaypointRecorder::triggerCallback,
                                this);
-  nh_.getParam("gps_topic", gps_topic_);
+  if(!nh_.getParam("gps_topic", gps_topic_)){
+    ROS_ERROR("Could not get parameter \"gps_topic\", shutting down");
+    ros::shutdown();
+  }
   ROS_INFO_STREAM("GPS topic is: " << gps_topic_);
   gps_sub_ = nh_.subscribe(gps_topic_,
                                10,
                                &WaypointRecorder::gpsCallback,
                                this);
-  nh_.getParam("waypoint_file", file_name_);
+  if(!nh_.getParam("waypoint_file", file_name_)){
+    ROS_ERROR("Could not get parameter \"waypoint_file\", shutting down");
+    ros::shutdown();
+  }
   waypoint_file_.open(file_name_);
 }
 
