@@ -10,11 +10,11 @@
 namespace gps_navigation
 {
 
-class GPSTransformAction
+class GPSActionNavigator
 {
 public:
   using Client = actionlib::SimpleActionClient<move_base_msgs::MoveBaseAction>;
-  explicit GPSTransformAction(const ros::NodeHandle &nh);
+  explicit GPSActionNavigator(const ros::NodeHandle &nh);
 
 private:
   void setpointCallback(const geographic_msgs::GeoPoint::ConstPtr& msg);
@@ -35,7 +35,7 @@ private:
 };
 
 
-GPSTransformAction::GPSTransformAction(const ros::NodeHandle &nh)
+GPSActionNavigator::GPSActionNavigator(const ros::NodeHandle &nh)
     : nh_(nh),
       ac_("move_base", true)
 {
@@ -44,11 +44,11 @@ GPSTransformAction::GPSTransformAction(const ros::NodeHandle &nh)
 
   setpoint_sub_ = nh_.subscribe("/gps_nav_setpoint",
                                 10,
-                                &GPSTransformAction::setpointCallback,
+                                &GPSActionNavigator::setpointCallback,
                                 this);
 
   countdown_ = nh.createTimer(ros::Duration(timeout_),
-                            boost::bind(&GPSTransformAction::timeoutCallback,
+                            boost::bind(&GPSActionNavigator::timeoutCallback,
                                         this,
                                         _1),
                             true,   // oneshot
@@ -59,7 +59,7 @@ GPSTransformAction::GPSTransformAction(const ros::NodeHandle &nh)
 
 }
 
-void GPSTransformAction::setpointCallback(const geographic_msgs::GeoPoint::ConstPtr& msg)
+void GPSActionNavigator::setpointCallback(const geographic_msgs::GeoPoint::ConstPtr& msg)
 {
   ROS_INFO("Recieved setpoint, lat: %f long: %f alt: %f",
            msg->latitude, msg->longitude, msg->altitude);
@@ -80,23 +80,23 @@ void GPSTransformAction::setpointCallback(const geographic_msgs::GeoPoint::Const
     countdown_.start();
     ROS_INFO("Sending goal to move_base");
     ac_.sendGoal(goal,
-                boost::bind(&GPSTransformAction::doneCallback, this, _1, _2),
+                boost::bind(&GPSActionNavigator::doneCallback, this, _1, _2),
                 Client::SimpleActiveCallback(),
-                boost::bind(&GPSTransformAction::feedbackCallback, this, _1));
+                boost::bind(&GPSActionNavigator::feedbackCallback, this, _1));
   }
   else {
     ROS_ERROR("Failed to call service fromLL");
   }
 }
 
-void GPSTransformAction::doneCallback(const actionlib::SimpleClientGoalState& state,
+void GPSActionNavigator::doneCallback(const actionlib::SimpleClientGoalState& state,
                                       const move_base_msgs::MoveBaseResultConstPtr& result)
 {
   ROS_INFO_STREAM("Action completed with state: " << state.toString());
   countdown_.stop();
 }
 
-void GPSTransformAction::timeoutCallback(const ros::TimerEvent&)
+void GPSActionNavigator::timeoutCallback(const ros::TimerEvent&)
 {
   ROS_INFO("Timeout hit, canceling move_base action");
   ac_.cancelGoal();
@@ -105,7 +105,7 @@ void GPSTransformAction::timeoutCallback(const ros::TimerEvent&)
   countdown_.stop();
 }
 
-void GPSTransformAction::feedbackCallback(const move_base_msgs::MoveBaseFeedbackConstPtr& fb)
+void GPSActionNavigator::feedbackCallback(const move_base_msgs::MoveBaseFeedbackConstPtr& fb)
 {
   ROS_INFO_STREAM("Feedback: x=" << fb->base_position.pose.position.x
                   << " y=" << fb->base_position.pose.position.y);

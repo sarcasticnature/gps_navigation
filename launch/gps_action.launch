@@ -1,0 +1,11 @@
+<launch>
+  <arg name="world_frame"/>
+  <arg name="timeout"/>
+
+  <node name="gps_action_nav" pkg="gps_navigation" type="gps_action_navigator" output="screen">
+    <param name="world_frame" value="$(arg world_frame)"/>
+    <param name="timeout" value="$(arg timeout)"/>
+  </node>
+
+</launch>
+

@@ -8,10 +8,10 @@
 namespace gps_navigation
 {
 
-class GPSTransformSimple
+class GPSSimpleNavigator
 {
 public:
-    explicit GPSTransformSimple(const ros::NodeHandle &nh);
+    explicit GPSSimpleNavigator(const ros::NodeHandle &nh);
 
 private:
     void setpointCallback(const geographic_msgs::GeoPoint::ConstPtr& msg);
@@ -27,11 +27,11 @@ private:
 };
 
 
-GPSTransformSimple::GPSTransformSimple(const ros::NodeHandle &nh) : nh_(nh)
+GPSSimpleNavigator::GPSSimpleNavigator(const ros::NodeHandle &nh) : nh_(nh)
 {
     setpoint_sub_ = nh_.subscribe("/gps_nav_setpoint",
                                   10,
-                                  &GPSTransformSimple::setpointCallback,
+                                  &GPSSimpleNavigator::setpointCallback,
                                   this);
 
     goal_pub_ = nh_.advertise<geometry_msgs::PoseStamped>("/move_base_simple/goal", 1);
@@ -44,7 +44,7 @@ GPSTransformSimple::GPSTransformSimple(const ros::NodeHandle &nh) : nh_(nh)
 
 }
 
-void GPSTransformSimple::setpointCallback(const geographic_msgs::GeoPoint::ConstPtr& msg)
+void GPSSimpleNavigator::setpointCallback(const geographic_msgs::GeoPoint::ConstPtr& msg)
 {
     ROS_INFO("Recieved setpoint, lat: %f long: %f alt: %f",
              msg->latitude, msg->longitude, msg->altitude);

@@ -138,8 +138,8 @@ include_directories(
 ## Declare a C++ executable
 ## With catkin_make all packages are built within a single CMake context
 ## The recommended prefix ensures that target names across packages don't collide
-add_executable(gps_transform_simple_node src/gps_transform_simple_node.cpp)
-add_executable(gps_transform_action_node src/gps_transform_action_node.cpp)
+add_executable(gps_simple_navigator src/gps_simple_navigator_node.cpp)
+add_executable(gps_action_navigator src/gps_action_navigator_node.cpp)
 add_executable(action_demo src/move_base_action_demo.cpp)
 add_executable(waypoint_recorder src/waypoint_recorder_node.cpp)
 add_executable(waypoint_printer src/waypoint_printer_node.cpp)
@@ -153,18 +153,18 @@ add_executable(waypoint_navigator src/waypoint_navigator_node.cpp)
 
 ## Add cmake target dependencies of the executable
 ## same as for the library above
-add_dependencies(gps_transform_simple_node  ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
-add_dependencies(gps_transform_action_node  ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
+add_dependencies(gps_simple_navigator  ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
+add_dependencies(gps_action_navigator  ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
 add_dependencies(action_demo  ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
 add_dependencies(waypoint_recorder  ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
 add_dependencies(waypoint_printer  ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
 add_dependencies(waypoint_navigator  ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
 
 ## Specify libraries to link a library or executable target against
-target_link_libraries(gps_transform_simple_node 
+target_link_libraries(gps_simple_navigator
   ${catkin_LIBRARIES}
 )
-target_link_libraries(gps_transform_action_node 
+target_link_libraries(gps_action_navigator
   ${catkin_LIBRARIES}
 )
 target_link_libraries(action_demo 

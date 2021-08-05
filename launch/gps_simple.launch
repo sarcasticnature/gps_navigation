@@ -1,0 +1,7 @@
+<launch>
+  <arg name="world_frame" default="map"/>
+  <node name="gps_simple_nav" pkg="gps_navigation" type="gps_simple_navigator" output="screen">
+    <param name="world_frame" value="$(arg world_frame)"/>
+  </node>
+
+</launch>
