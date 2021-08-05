@@ -1,0 +1,11 @@
+<launch>
+  <arg name="world_frame"/>
+  <arg name="timeout"/>
+  <arg name="filename" default="waypoint_default"/>
+  <node name="waypoint_navigator" pkg="gps_navigation" type="waypoint_navigator" output="screen">
+    <param name="world_frame" value="$(arg world_frame)"/>
+    <param name="timeout" value="$(arg timeout)"/>
+    <param name="filename" value="$(arg filename)"/>
+  </node>
+</launch>
+

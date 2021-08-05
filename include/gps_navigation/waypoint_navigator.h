@@ -65,7 +65,12 @@ WaypointNavigator::WaypointNavigator(const ros::NodeHandle &nh)
 
   waypoint_file_.open(ros::package::getPath("gps_navigation")
                       + "/waypoint_files/"
-                      + filename_);
+                      + filename_
+                      + ".csv");
+  if(!waypoint_file_.good()){
+    ROS_ERROR("Could not open waypoint file, shutting down");
+    ros::shutdown();
+  }
 
   ROS_INFO("Waiting for action server");
   ac_.waitForServer();

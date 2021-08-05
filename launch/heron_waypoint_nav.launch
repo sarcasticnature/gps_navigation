@@ -1,8 +1,10 @@
 <launch>
-    <node name="gps_nav_action" pkg="gps_navigation" type="waypoint_navigator" output="screen">
-        <param name="world_frame" value="odom" />
-        <param name="timeout" value="30.0" />
-        <param name="filename" value="default.csv" />
-    </node>
+  <arg name="timeout" default="30.0"/>
+  <arg name="filename" default="waypoint_default"/>
+  <include file="$(find gps_navigation)/launch/waypoint_navigator.launch">
+    <arg name="world_frame" value="odom"/>
+    <arg name="timeout" value="$(arg timeout)"/>
+    <arg name="filename" value="$(arg filename)"/>
+  </include>
 </launch>
 
