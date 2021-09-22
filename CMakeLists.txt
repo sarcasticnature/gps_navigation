@@ -138,11 +138,26 @@ include_directories(
 ## Declare a C++ executable
 ## With catkin_make all packages are built within a single CMake context
 ## The recommended prefix ensures that target names across packages don't collide
-add_executable(gps_simple_navigator src/gps_simple_navigator_node.cpp)
-add_executable(gps_action_navigator src/gps_action_navigator_node.cpp)
-add_executable(waypoint_recorder src/waypoint_recorder_node.cpp)
-add_executable(waypoint_printer src/waypoint_printer_node.cpp)
-add_executable(waypoint_navigator src/waypoint_navigator_node.cpp)
+add_executable(gps_simple_navigator
+  src/gps_simple_navigator.cpp
+  src/gps_simple_navigator_node.cpp
+)
+add_executable(gps_action_navigator
+  src/gps_action_navigator.cpp
+  src/gps_action_navigator_node.cpp
+)
+add_executable(waypoint_navigator
+  src/waypoint_navigator.cpp
+  src/waypoint_navigator_node.cpp
+)
+add_executable(waypoint_printer
+  src/waypoint_printer.cpp
+  src/waypoint_printer_node.cpp
+)
+add_executable(waypoint_recorder
+  src/waypoint_recorder.cpp
+  src/waypoint_recorder_node.cpp
+)
 
 ## Rename C++ executable without prefix
 ## The above recommended prefix causes long target names, the following renames the
